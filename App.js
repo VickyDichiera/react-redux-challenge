@@ -9,7 +9,7 @@ function App(props) {
       </section>
       <aside className="summary">
         <h1 className="main">Order Summary</h1>
-        {/* <orderSummaryContainer></orderSummaryContainer> */}
+        <OrderSummaryContainer></OrderSummaryContainer>
       </aside>
     </main>
   );
