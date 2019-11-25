@@ -11,3 +11,11 @@ let decrementProductQuantity = code => {
         code: code
     }
 };
+
+let setProductQuantity = (code, quantity) => {
+    return {
+        type: 'SET',
+        code: code,
+        quantity: quantity
+    }
+};

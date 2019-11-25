@@ -3,7 +3,10 @@ class ShoppingCart extends React.Component {
   constructor(props) {
     super(props);
 
-    this.updateProductCart = this.updateProductCart.bind(this);
+    //this.updateProductCart = this.updateProductCart.bind(this);
+    this.addProductCartQuantity = this.addProductCartQuantity.bind(this);
+    this.deleteProductCartQuantity = this.deleteProductCartQuantity.bind(this);
+    this.setProductCartQuantity = this.setProductCartQuantity.bind(this);
   }
 
   shoppingCartMapper(shoppingCartList, productByCode, shoppingCartByCode) {
@@ -25,13 +28,19 @@ class ShoppingCart extends React.Component {
     })
   }
 
-  updateProductCart(method, productCode) {
-    if (method === 'add') {
-      this.props.incrementProductQuantity(productCode)
-    } else {
-      if (this.props.shoppingCartByCode[productCode].quantity > 0) {
-        this.props.decrementProductQuantity(productCode)
-      }
+  addProductCartQuantity(productCode) {
+    this.props.incrementProductQuantity(productCode);
+  }
+
+  deleteProductCartQuantity(productCode) {
+    if (this.props.shoppingCartByCode[productCode].quantity > 0) {
+      this.props.decrementProductQuantity(productCode)
+    }
+  }
+
+  setProductCartQuantity(quantity, productCode) {
+    if (quantity >= 0 ) {
+      this.props.setProductQuantity(productCode, quantity);
     }
   }
 
@@ -59,9 +68,9 @@ class ShoppingCart extends React.Component {
               </figure>
             </div>
             <div className="col-quantity">
-              <button className="count" onClick={() => this.updateProductCart('delete', product.code)}>-</button>
-              <input type="text" className="product-quantity" value={product.quantity} />
-              <button className="count" onClick={() => this.updateProductCart('add', product.code)}>+</button>
+              <button className="count" onClick={() => this.deleteProductCartQuantity(product.code)}>-</button>
+              <input type="text" className="product-quantity" value={product.quantity} onChange={ev => this.setProductCartQuantity(ev.target.value, product.code)} />
+              <button className="count" onClick={() => this.addProductCartQuantity(product.code)}>+</button>
             </div>
             <div className="col-price">
               <span className="product-price">{product.price}</span><span className="product-currency currency">{product.priceCurrency}</span>
@@ -92,6 +101,9 @@ const mapDispatchToProps = dispatch => {
     },
     decrementProductQuantity: code => {
       dispatch(decrementProductQuantity(code))
+    },
+    setProductQuantity: (code, quantity) => {
+      dispatch(setProductQuantity(code, quantity))
     }
   }
 };

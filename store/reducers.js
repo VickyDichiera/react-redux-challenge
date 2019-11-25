@@ -51,6 +51,14 @@ function shoppingCartReducer(state = initialState, action) {
         ...state,
         shoppingCartByCode: shoppingCartByCode,
       };
+    case 'SET':
+        if (action.quantity >= 0) {
+          shoppingCartByCode[action.code].quantity = action.quantity;
+        }
+        return {
+          ...state,
+          shoppingCartByCode: shoppingCartByCode,
+        };
     default:
       return state
   }

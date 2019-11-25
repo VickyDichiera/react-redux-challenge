@@ -5,10 +5,11 @@ function App(props) {
     <main className="App">
       <section className="products">
         <h1 className="main">Shopping cart</h1>
-        <ShoppingCartContainer ></ShoppingCartContainer>
+        <ShoppingCartContainer></ShoppingCartContainer>
       </section>
       <aside className="summary">
         <h1 className="main">Order Summary</h1>
+        {/* <orderSummaryContainer></orderSummaryContainer> */}
       </aside>
     </main>
   );
