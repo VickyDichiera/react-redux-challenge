@@ -3,7 +3,6 @@ class ShoppingCart extends React.Component {
   constructor(props) {
     super(props);
 
-    //this.updateProductCart = this.updateProductCart.bind(this);
     this.addProductCartQuantity = this.addProductCartQuantity.bind(this);
     this.deleteProductCartQuantity = this.deleteProductCartQuantity.bind(this);
     this.setProductCartQuantity = this.setProductCartQuantity.bind(this);
@@ -38,8 +37,15 @@ class ShoppingCart extends React.Component {
     }
   }
 
-  setProductCartQuantity(quantity, productCode) {
-    if (quantity >= 0 ) {
+  setProductCartQuantity(ev, productCode) {
+    const quantity = ev.target.value;
+    let error = false;
+
+    if (isNaN(quantity) || !quantity) {
+      error = true;
+    }
+
+    if (!error && quantity >= 0 ) {
       this.props.setProductQuantity(productCode, quantity);
     }
   }
@@ -69,7 +75,7 @@ class ShoppingCart extends React.Component {
             </div>
             <div className="col-quantity">
               <button className="count" onClick={() => this.deleteProductCartQuantity(product.code)}>-</button>
-              <input type="text" className="product-quantity" value={product.quantity} onChange={ev => this.setProductCartQuantity(ev.target.value, product.code)} />
+              <input type="text" className="product-quantity" name="quantity" value={product.quantity} onChange={ev => this.setProductCartQuantity(ev, product.code)} />
               <button className="count" onClick={() => this.addProductCartQuantity(product.code)}>+</button>
             </div>
             <div className="col-price">

@@ -7,16 +7,7 @@ class Checkout extends React.Component {
     window.checkoutInstance = this;
   }
 
-  /*
-  Have a Checkout class, that can be instantiated with products and discounts available.
-  - Allow adding products to the checkout with the scan method,
-  passing the product ID as string in his first argument.
-  - Allow calculating the total price with the total method,
-  which won't accept any arguments and will return the total price (discount already applied) as number.
-    Checkout(pricingRules);
-  co.scan("TSHIRT").scan("CAP").scan("TSHIRT");
-  const totalPrice = co.total();
-  */
+  //Ass products to the checkout with the scan method, passing the product ID as string in his first argument
   scan(productName) {
     let product = this.props.products.find(product => product.name.toUpperCase() === productName.toUpperCase());
     let productCode = product ? product.code : null;
@@ -25,11 +16,32 @@ class Checkout extends React.Component {
     }
   }
 
+  //Return total with discounts already applied
   total() {
-    let totalPrice;
-    totalPrice ;
+    let subTotal = 0;
+    let accumulatedDiscounts = 0;
 
-    return totalPrice;
+    const {shoppingCartCodeList, productByCode, shoppingCartByCode} = this.props;
+
+    shoppingCartCodeList.forEach(code => {
+      const productData = productByCode[code] ? productByCode[code] : null;
+      if (productData) {
+        const unitaryPrice = productByCode[code].price;
+        const productQuantity = shoppingCartByCode[code].quantity;
+
+        subTotal += unitaryPrice * productQuantity;
+
+        if(this.props.productDiscountsByCode[code]){
+          const discount = this.props.productDiscountsByCode[code];
+          if (discount.isApplicable(productQuantity)) {
+            const discountValue = discount.calculate(unitaryPrice, productQuantity);
+            accumulatedDiscounts += discountValue;
+          }
+        }
+      }
+    });
+
+    return subTotal - accumulatedDiscounts;
   }
 
   render() {
@@ -39,7 +51,11 @@ class Checkout extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    products: state.products
+    products: state.products,
+    shoppingCartCodeList: state.shoppingCartCodeList,
+    productByCode: state.productByCode,
+    shoppingCartByCode: state.shoppingCartByCode,
+    productDiscountsByCode: state.productDiscountsByCode
   }
 }
 

@@ -8,13 +8,6 @@ class OrderSummary extends React.Component {
     Calculate totals with discounts applied
   */
   orderSummaryMapper(shoppingCartCodeList, productByCode, shoppingCartByCode) {
-
-    /**
-     * 0(pin):"X7R2OPX"
-  1(pin):"X2G2OPZ"
-  2(pin):"X3W2OPY"
-  3(pin):"newprodcode"
-     */
     let mappedData = {
       totalQuantity: 0,
       subTotal: 0,
