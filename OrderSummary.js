@@ -18,17 +18,34 @@ class OrderSummary extends React.Component {
     let mappedData = {
       totalQuantity: 0,
       subTotal: 0,
+      discounts: [{code: 'promoCode', description: 'Promo code', total: 0}],
       total: 0
     };
 
+    let accumulatedDiscounts = 0;
+
     shoppingCartCodeList.forEach(code => {
-      let productData = productByCode[code] ? productByCode[code] : null;
+      const productData = productByCode[code] ? productByCode[code] : null;
       if (productData) {
-        mappedData.totalQuantity += shoppingCartByCode[code].quantity;
-        mappedData.subTotal += productByCode[code].price * shoppingCartByCode[code].quantity;
-        mappedData.total = mappedData.subTotal;
+        const unitaryPrice = productByCode[code].price;
+        const productQuantity = shoppingCartByCode[code].quantity;
+
+        mappedData.totalQuantity += productQuantity;
+        mappedData.subTotal += unitaryPrice * productQuantity;
+
+        if(this.props.productDiscountsByCode[code]){
+          const discount = this.props.productDiscountsByCode[code];
+          if (discount.isApplicable(productQuantity)) {
+            const discountValue = discount.calculate(unitaryPrice, productQuantity);
+            accumulatedDiscounts += discountValue;
+            mappedData.discounts.push({code: code, description: discount.description, total: discountValue})
+          }
+        }
       }
     });
+
+    mappedData.total = mappedData.subTotal - accumulatedDiscounts;
+
 
     return mappedData;
   }
@@ -47,9 +64,9 @@ class OrderSummary extends React.Component {
         <div className="summary-discounts wrapper-half border">
           <h2>Discounts</h2>
           <ul>
-            <li><span>2x1 Mug offer</span><span>-10€</span></li>
-            <li><span>x3 Shirt offer</span><span>-3€</span></li>
-            <li><span>Promo code</span><span>0€</span></li>
+          {orderSummaryMapped.discounts.map((discount) =>
+            <li key={discount.code}><span>{discount.description}</span><span>-{discount.total}€</span></li>
+          )}
           </ul>
         </div>
         <div className="summary-total wrapper">
@@ -71,7 +88,7 @@ const mapStateToProps = state => {
     shoppingCartCodeList: state.shoppingCartCodeList,
     productByCode: state.productByCode,
     shoppingCartByCode: state.shoppingCartByCode,
-    discountsByCode: state.discountsByCode
+    productDiscountsByCode: state.productDiscountsByCode
   }
 }
 
