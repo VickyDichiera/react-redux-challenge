@@ -4,34 +4,44 @@ class OrderSummary extends React.Component {
     super(props);
   }
 
-  shoppingCartMapper(shoppingCartList, productByCode, shoppingCartByCode) {
-    return shoppingCartList.map(code => {
+  /*
+    Calculate totals with discounts applied
+  */
+  orderSummaryMapper(shoppingCartCodeList, productByCode, shoppingCartByCode) {
+
+    /**
+     * 0(pin):"X7R2OPX"
+  1(pin):"X2G2OPZ"
+  2(pin):"X3W2OPY"
+  3(pin):"newprodcode"
+     */
+    let mappedData = {
+      totalQuantity: 0,
+      subTotal: 0,
+      total: 0
+    };
+
+    shoppingCartCodeList.forEach(code => {
       let productData = productByCode[code] ? productByCode[code] : null;
-      let mappedData = {};
       if (productData) {
-        mappedData.code = code;
-        mappedData.name = productData.name;
-        mappedData.imgSrc = productData.imgSrc;
-        mappedData.price = productData.price;
-        mappedData.priceCurrency = productData.priceCurrency;
-
-        mappedData.quantity = shoppingCartByCode[code].quantity;
-        mappedData.total = mappedData.price * mappedData.quantity;
+        mappedData.totalQuantity += shoppingCartByCode[code].quantity;
+        mappedData.subTotal += productByCode[code].price * shoppingCartByCode[code].quantity;
+        mappedData.total = mappedData.subTotal;
       }
+    });
 
-      return mappedData;
-    })
+    return mappedData;
   }
 
   render() {
+    const orderSummaryMapped = this.orderSummaryMapper(this.props.shoppingCartCodeList, this.props.productByCode, this.props.shoppingCartByCode);
+
     return (
       <React.Fragment>
         <ul className="summary-items wrapper border">
           <li>
-            <span className="summary-items-number">11 Items</span
-            ><span className="summary-items-price"
-            >120<span className="currency">€</span></span
-            >
+            <span className="summary-items-number">{orderSummaryMapped.totalQuantity} Items</span>
+            <span className="summary-items-price">{orderSummaryMapped.subTotal}<span className="currency">€</span></span>
           </li>
         </ul>
         <div className="summary-discounts wrapper-half border">
@@ -46,7 +56,7 @@ class OrderSummary extends React.Component {
           <ul>
             <li>
               <span className="summary-total-cost">Total cost</span
-              ><span className="summary-total-price">107€</span>
+              ><span className="summary-total-price">{orderSummaryMapped.total}€</span>
             </li>
           </ul>
           <button type="submit">Checkout</button>
@@ -58,9 +68,10 @@ class OrderSummary extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    shoppingCartList: state.shoppingCartList,
+    shoppingCartCodeList: state.shoppingCartCodeList,
     productByCode: state.productByCode,
-    shoppingCartByCode: state.shoppingCartByCode
+    shoppingCartByCode: state.shoppingCartByCode,
+    discountsByCode: state.discountsByCode
   }
 }
 

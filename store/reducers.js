@@ -1,9 +1,9 @@
 let initialState = {
   products: [
-    { code: 'X7R2OPX', name: 'Shirt', imgSrc: 'img/shirt.png', price: 20, priceCurrency: '€' },
+    { code: 'X7R2OPX', name: 'TShirt', imgSrc: 'img/shirt.png', price: 20, priceCurrency: '€' },
     { code: 'X2G2OPZ', name: 'Mug', imgSrc: 'img/mug.png', price: 5, priceCurrency: '€' },
     { code: 'X3W2OPY', name: 'Cap', imgSrc: 'img/cap.png', price: 10, priceCurrency: '€' },
-    { code: 'newProduct', name: 'newProduct', imgSrc: 'img/cap.png', price: 10, priceCurrency: '€' }
+    { code: 'newprodcode', name: 'newprod', imgSrc: 'img/cap.png', price: 500, priceCurrency: '€' }
   ],
 
   shoppingCartByCode: {
@@ -11,26 +11,30 @@ let initialState = {
     X2G2OPZ: { code: 'X2G2OPZ', quantity: 4 },
     X3W2OPY: { code: 'X3W2OPY', quantity: 4 }
   },
-
-  shoppingCartList: [
+  shoppingCartCodeList: [
     'X7R2OPX',
     'X2G2OPZ',
     'X3W2OPY'
   ],
 
-  productByCode: {
-    X7R2OPX: { code: 'X7R2OPX', name: 'Shirt', imgSrc: 'img/shirt.png', price: 20, priceCurrency: '€' },
-    X2G2OPZ: { code: 'X2G2OPZ', name: 'Mug', imgSrc: 'img/mug.png', price: 5, priceCurrency: '€' },
-    newOne: { code: 'newOne', name: 'newOne', imgSrc: 'img/cap.png', price: 10, priceCurrency: '€' },
-    X3W2OPY: { code: 'X3W2OPY', name: 'Cap', imgSrc: 'img/cap.png', price: 10, priceCurrency: '€' }
-  },
-
-  productList: [
+  productCodeList: [
     'X7R2OPX',
     'X2G2OPZ',
-    'newOne',
-    'X3W2OPY'
-  ]
+    'X3W2OPY',
+    'newprodcode'
+  ],
+
+  productByCode: {
+    X7R2OPX: { code: 'X7R2OPX', name: 'TShirt', imgSrc: 'img/shirt.png', price: 20, priceCurrency: '€' },
+    X2G2OPZ: { code: 'X2G2OPZ', name: 'Mug', imgSrc: 'img/mug.png', price: 5, priceCurrency: '€' },
+    X3W2OPY: { code: 'X3W2OPY', name: 'Cap', imgSrc: 'img/cap.png', price: 10, priceCurrency: '€' },
+   newprodcode: { name: 'newprod', imgSrc: 'img/cap.png', price: 500, priceCurrency: '€' }
+  },
+
+  discountsByCode: {
+    X7R2OPX: { description: 'x3 TShirt offer' },
+    X3W2OPY: { description: '2x1 Mug offer' }
+  }
 };
 
 function shoppingCartReducer(state = initialState, action) {
@@ -52,13 +56,27 @@ function shoppingCartReducer(state = initialState, action) {
         shoppingCartByCode: shoppingCartByCode,
       };
     case 'SET':
-        if (action.quantity >= 0) {
-          shoppingCartByCode[action.code].quantity = action.quantity;
+      if (action.quantity >= 0) {
+        shoppingCartByCode[action.code].quantity = parseInt(action.quantity);
+      }
+      return {
+        ...state,
+        shoppingCartByCode: shoppingCartByCode,
+      };
+    case 'SCAN':
+      if (shoppingCartByCode[action.code]) {
+        shoppingCartByCode[action.code].quantity += 1;
+      } else {
+        let product = state.products.find(product => product.code === action.code);
+        if (product) {
+          state.shoppingCartCodeList.push(product.code);
+          shoppingCartByCode[product.code] = {code: product.code, quantity: 1}
         }
-        return {
-          ...state,
-          shoppingCartByCode: shoppingCartByCode,
-        };
+      }
+      return {
+        ...state,
+        shoppingCartByCode: shoppingCartByCode
+      };
     default:
       return state
   }

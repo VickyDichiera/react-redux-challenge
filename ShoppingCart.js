@@ -9,8 +9,8 @@ class ShoppingCart extends React.Component {
     this.setProductCartQuantity = this.setProductCartQuantity.bind(this);
   }
 
-  shoppingCartMapper(shoppingCartList, productByCode, shoppingCartByCode) {
-    return shoppingCartList.map(code => {
+  shoppingCartMapper(shoppingCartCodeList, productByCode, shoppingCartByCode) {
+    return shoppingCartCodeList.map(code => {
       let productData = productByCode[code] ? productByCode[code] : null;
       let mappedData = {};
       if (productData) {
@@ -45,7 +45,7 @@ class ShoppingCart extends React.Component {
   }
 
   render() {
-    let shoppingCartProductsMapped = this.shoppingCartMapper(this.props.shoppingCartList, this.props.productByCode, this.props.shoppingCartByCode);
+    const shoppingCartProductsMapped = this.shoppingCartMapper(this.props.shoppingCartCodeList, this.props.productByCode, this.props.shoppingCartByCode);
 
     return (
       <ul className="products-list tableHead">
@@ -88,7 +88,7 @@ class ShoppingCart extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    shoppingCartList: state.shoppingCartList,
+    shoppingCartCodeList: state.shoppingCartCodeList,
     productByCode: state.productByCode,
     shoppingCartByCode: state.shoppingCartByCode
   }

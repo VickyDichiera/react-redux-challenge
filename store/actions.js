@@ -19,3 +19,10 @@ let setProductQuantity = (code, quantity) => {
         quantity: quantity
     }
 };
+
+let scanProduct = code => {
+    return {
+        type: 'SCAN',
+        code: code
+    }
+};

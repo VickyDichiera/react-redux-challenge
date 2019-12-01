@@ -10,6 +10,7 @@ function App(props) {
       <aside className="summary">
         <h1 className="main">Order Summary</h1>
         <OrderSummaryContainer></OrderSummaryContainer>
+        <CheckoutContainer></CheckoutContainer>
       </aside>
     </main>
   );
